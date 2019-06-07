@@ -71,5 +71,3 @@ if __name__ == '__main__':
 
         with open('serverlog.json', 'w', encoding='utf8') as jsonlog:
                 jsonlog.write(json.dumps(serverdict, ensure_ascii=False, indent=4))
-                
-        driver.quit()
