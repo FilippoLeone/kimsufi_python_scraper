@@ -5,7 +5,13 @@ from selenium.webdriver.firefox.options import Options
 import time
 import json
 import smtplib
+import requests
+import credentials
 
+def send_telegram_message(message):
+        requests.get(
+                f'https://api.telegram.org/bot{credentials.telegram_token}/sendMessage?chat_id={credentials.telegram_channel}&text={message}&parse_mode=markdown'
+        )
 
 def sendmail():
         server = smtplib.SMTP('smtp.gmail.com', 587)
@@ -22,11 +28,10 @@ def prior_check():
                 return False
 
 if __name__ == '__main__':
-        firefoxpath = r'C:\Users\Home\Desktop\kimsufi-scraper\Lib\site-packages\selenium\webdriver\firefox\geckodriver.exe'
-        # Path to your geckodriver, you can download it from here https://github.com/mozilla/geckodriver/releases
         options = Options()
         options.add_argument('-headless')
-        driver = Firefox(executable_path=firefoxpath, options=options)
+        driver = Firefox(executable_path=credentials.firefox_path, options=options)
+        # Path to your geckodriver, you can download it from here https://github.com/mozilla/geckodriver/releases
         driver.get('http://www.kimsufi.com/en/servers.xml')
         time.sleep(5)
         status = driver.execute_script('function a() {return document.readyState;};return a();')
@@ -66,8 +71,8 @@ if __name__ == '__main__':
         if oldjson:
                 for (key_old,value_old), (key_new,value_new) in zip(oldjson.items(), serverdict.items()):
                         if value_old != value_new:
-                                #print(f"{value_old} , {value_new}")
-                                print(f"{key_new} changed availability and is now: {value_new}.")
+                                send_telegram_message(f"*ALERT!*\nThe server:\n*{key_new}*\nChanged availability and is now: \n*{value_new}*.")
+                                #print(f"{key_new} changed availability and is now: {value_new}.")
 
         with open('serverlog.json', 'w', encoding='utf8') as jsonlog:
                 jsonlog.write(json.dumps(serverdict, ensure_ascii=False, indent=4))
