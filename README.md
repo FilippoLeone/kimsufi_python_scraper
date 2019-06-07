@@ -4,7 +4,9 @@ This script allows the user to be alerted when the availability changes over tim
 
 **NOTE** A Telegram channel is already set up and it's running this script!
 
-![alt text](https://telegram.org/img/t_logo.png "Telegram Channel") Join now: https://t.me/kimsufi_alert 
+![alt text](https://telegram.org/img/t_logo.png "Telegram Channel") 
+
+Join now: https://t.me/kimsufi_alert 
 
 The script will run every hour and it will send a message in the channel when the availability changes.
 
