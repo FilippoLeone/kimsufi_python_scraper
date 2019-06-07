@@ -65,7 +65,8 @@ if __name__ == '__main__':
         oldjson = prior_check()
         if oldjson:
                 for (key_old,value_old), (key_new,value_new) in zip(oldjson.items(), serverdict.items()):
-                        if value_old not in value_new:
+                        if value_old != value_new:
+                                #print(f"{value_old} , {value_new}")
                                 print(f"{key_new} changed availability and is now: {value_new}.")
 
         with open('serverlog.json', 'w', encoding='utf8') as jsonlog:
