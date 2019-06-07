@@ -1,7 +1,12 @@
 # Kimsufi scraper
 
-This script allows the user to be alerted when the availability changes over time for the Kimsufi servers. 
-A Telegram channel is already set up and if you just want to get this information you can join by following this link: https://t.me/kimsufi_alert, the script will run every hour and it will send a message in the channel when the availability changes.
+This script allows the user to be alerted when the availability changes over time for the Kimsufi servers.
+
+**NOTE** A Telegram channel is already set up and it's running this script!
+
+![alt text](https://telegram.org/img/t_logo.png "Telegram Channel") Join now: https://t.me/kimsufi_alert 
+
+The script will run every hour and it will send a message in the channel when the availability changes.
 
 # How to use the script
 
