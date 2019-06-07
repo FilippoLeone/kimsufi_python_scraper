@@ -19,12 +19,12 @@ def sendmail():
         server.starttls()
         # compose and send the email
 
-def prior_check():
+def get_old_data():
         try:
                 with open('serverlog.json', 'r', encoding='utf8') as serverlog:
                         jsondata = json.load(serverlog)
                 return jsondata
-        except FileExistsError:
+        except FileNotFoundError:
                 return False
 
 if __name__ == '__main__':
@@ -67,7 +67,7 @@ if __name__ == '__main__':
                                 except KeyError:
                                         serverdict[serverinfo] = 'Available';
         #print(f"{serverdict}")
-        oldjson = prior_check()
+        oldjson = get_old_data()
         if oldjson:
                 for (key_old,value_old), (key_new,value_new) in zip(oldjson.items(), serverdict.items()):
                         if value_old != value_new:
