@@ -17,6 +17,7 @@ class Scraper:
         self.driver = None
 
     def __del__(self):
+        self.Logger.log(loginfo.DRIVER_KILL, self.type)
         self.driver.quit()
 
     def create_driver(self, driver_type='Firefox'):
