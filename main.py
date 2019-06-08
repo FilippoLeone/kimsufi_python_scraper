@@ -1,43 +1,21 @@
 # coding: utf8
-from bs4 import BeautifulSoup
-from selenium.webdriver import Firefox
-from selenium.webdriver.firefox.options import Options
-import time
-import json
-import smtplib
-import requests
+from scraper import Scraper
+from logger import Logger
+from communicator import Communicator
 import credentials
-
-def send_telegram_message(message):
-        requests.get(
-                f'https://api.telegram.org/bot{credentials.telegram_token}/sendMessage?chat_id={credentials.telegram_channel}&text={message}&parse_mode=markdown'
-        )
-
-def sendmail():
-        server = smtplib.SMTP('smtp.gmail.com', 587)
-        server.ehlo()
-        server.starttls()
-        # compose and send the email
-
-def get_old_data():
-        try:
-                with open('serverlog.json', 'r', encoding='utf8') as serverlog:
-                        jsondata = json.load(serverlog)
-                return jsondata
-        except FileNotFoundError:
-                return False
+from bs4 import BeautifulSoup
 
 if __name__ == '__main__':
-        options = Options()
-        options.add_argument('-headless')
-        driver = Firefox(executable_path=credentials.firefox_path, options=options)
-        # Path to your geckodriver, you can download it from here https://github.com/mozilla/geckodriver/releases
-        driver.get('http://www.kimsufi.com/en/servers.xml')
-        time.sleep(5)
-        status = driver.execute_script('function a() {return document.readyState;};return a();')
+        # Importing my wrappers
+        Scraper = Scraper()
+        Logger = Logger()
+        Communicator = Communicator()
+
+        Scraper.create_driver()
+        html_doc = Scraper.fetch_page('http://www.kimsufi.com/en/servers.xml')
+        status = Scraper.run_javascript('function a() {return document.readyState;};return a();')
+
         if status == 'complete':
-                html_doc = driver.page_source
-                driver.quit()
                 soup = BeautifulSoup(html_doc, 'html.parser')
                 tables = soup.findAll('table', {'class' : 'full homepage-table'})
                 serverdict = {}
@@ -49,7 +27,6 @@ if __name__ == '__main__':
                                 canadian_servers = table.findAll('tr', {'class' : 'zone-dedicated-availability'})
 
                 for server in english_servers:
-                        #serverinfo = server 
                         serverinfo = 'English: '+''.join(server.text.replace('\n','').replace(' ','').replace('ex.VATCurrentlybeingreplenishedHaveyouthoughtaboutchoosingaSoyouStartserver?Victimofitssuccess!Availablesoon.',''))
                         cart_elements = server.findAll('td', {'class' : 'btn-order-ks2014'})
                         for cart_element in cart_elements:
@@ -66,13 +43,9 @@ if __name__ == '__main__':
                                         cart_element['style'];serverdict[serverinfo] = 'Not Available';
                                 except KeyError:
                                         serverdict[serverinfo] = 'Available';
-        #print(f"{serverdict}")
-        oldjson = get_old_data()
+        oldjson = Logger.get_json()
         if oldjson:
                 for (key_old,value_old), (key_new,value_new) in zip(oldjson.items(), serverdict.items()):
                         if value_old != value_new:
-                                send_telegram_message(f"*ALERT!*\nThe server:\n*{key_new}*\nChanged availability and is now: \n*{value_new}*.")
-                                #print(f"{key_new} changed availability and is now: {value_new}.")
-
-        with open('serverlog.json', 'w', encoding='utf8') as jsonlog:
-                jsonlog.write(json.dumps(serverdict, ensure_ascii=False, indent=4))
+                                Communicator.telegram_message(f"*ALERT!*\nThe server:\n*{key_new}*\nChanged availability and is now: \n*{value_new}*.", credentials.telegram_channel)
+        Logger.log_json(serverdict)
