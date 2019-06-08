@@ -8,7 +8,7 @@ from logger import Logger
 class Scraper:
     def __init__(self, arguments='-headless'):
         """
-        Start the scraper driver and set it in headless mode  
+        Start the scraper driver and set its arguments, by default headless mode is enabled.
         """
         self.options = Options()
         self.options.add_argument(arguments)
@@ -17,8 +17,7 @@ class Scraper:
         self.driver = None
 
     def __del__(self):
-        pass
-        #self.driver.exit()
+        self.driver.quit()
 
     def create_driver(self, driver_type='Firefox'):
         """
