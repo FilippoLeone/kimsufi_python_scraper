@@ -6,18 +6,18 @@ import message_strings as loginfo
 from logger import Logger
 
 class Scraper:
+    logType = 'ScraperLog' 
+    
     def __init__(self, arguments='-headless'):
         """
         Start the scraper driver and set its arguments, by default headless mode is enabled.
         """
         self.options = Options()
         self.options.add_argument(arguments)
-        self.type = 'ScraperLog'
-        self.Logger = Logger()
+        self.Logger = Logger(Scraper.logType)
         self.driver = None
 
-    def __del__(self):
-        self.Logger.log(loginfo.DRIVER_KILL, self.type)
+    def kill_driver(self):
         self.driver.quit()
 
     def create_driver(self, driver_type='Firefox'):
@@ -30,7 +30,7 @@ class Scraper:
         elif driver_type:
             self.driver = Chrome(executable_path=credentials.driver_path, options=self.options)
 
-        self.Logger.log(driver_type+loginfo.DRIVER_OK, self.type)
+        self.Logger.log(driver_type+loginfo.DRIVER_OK)
 
     def fetch_page(self, url, sleeptime=5):
         """
@@ -40,17 +40,17 @@ class Scraper:
         try:
             self.driver.get(url)
             time.sleep(sleeptime)
-            self.Logger.log(loginfo.FETCH_OK, self.type)
+            self.Logger.log(loginfo.FETCH_OK)
             return self.driver.page_source
         except:
-            self.Logger.log(loginfo.FETCH_ERROR, self.type)
+            self.Logger.log(loginfo.FETCH_ERROR)
 
 
     def run_javascript(self, javascript, return_result=True):
         """
         Method to run JavaScript in the target page, by default it will return the result.
         """
-        self.Logger.log(loginfo.JS_OK, self.type)
+        self.Logger.log(loginfo.JS_OK)
         if return_result:
             return self.driver.execute_script(javascript)
 

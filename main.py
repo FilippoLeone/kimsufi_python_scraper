@@ -8,7 +8,7 @@ from bs4 import BeautifulSoup
 if __name__ == '__main__':
         # Importing my wrappers
         Scraper = Scraper()
-        Logger = Logger()
+        Logger = Logger(__file__)
         Communicator = Communicator()
 
         Scraper.create_driver()
@@ -49,3 +49,4 @@ if __name__ == '__main__':
                         if value_old != value_new:
                                 Communicator.telegram_message(f"*ALERT!*\nThe server:\n*{key_new}*\nChanged availability and is now: \n*{value_new}*.", credentials.telegram_channel)
         Logger.log_json(serverdict)
+        Scraper.kill_driver()

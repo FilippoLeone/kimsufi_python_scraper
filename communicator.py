@@ -4,9 +4,10 @@ import message_strings as loginfo
 import credentials
 
 class Communicator:
+    logType = 'CommunicatorLog'
+
     def __init__(self):
-        self.type = 'CommunicatorLog'
-        self.Logger = Logger()
+        self.Logger = Logger(Communicator.logType)
 
     def telegram_message(self, message, channel, parse_mode='markdown'):
         """
@@ -16,9 +17,9 @@ class Communicator:
                 f'https://api.telegram.org/bot{credentials.telegram_token}/sendMessage?chat_id={channel}&text={message}&parse_mode={parse_mode}'
         )
         if response.status_code == 200:
-            self.Logger.log(loginfo.REQUEST_SUCCEED, self.type)
+            self.Logger.log(loginfo.REQUEST_SUCCEED)
         else:
-            self.Logger.log(loginfo.REQUEST_FAIL + response.status_code, self.type)
+            self.Logger.log(loginfo.REQUEST_FAIL + response.status_code)
 
     def send_mail(self):
         """
