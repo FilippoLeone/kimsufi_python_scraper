@@ -21,6 +21,7 @@ class Scraper:
         """
         Kills the Selenium driver.
         """
+        self.Logger.log(loginfo.DRIVER_KILL)
         self.driver.quit()
 
     def create_driver(self, driver_type='Firefox'):
